@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pomodoro Timer</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        font-family: consolas;
+      }
+      #container {
+        margin: auto;
+        text-align: center;
+        width: 40%;
+        /* border: 2px solid blueviolet; */
+        border-radius: 25px;
+        box-shadow: 20px 20px 30px blueviolet;
+        margin-top: 150px;
+        padding: 20px;
+      }
+      h1 {
+        font-size: 56px;
+        margin-bottom: 10px;
+        color: blueviolet;
+        text-shadow: 5px 5px 10px darkgray;
+        /* background: yellow; */
+      }
+      #timer {
+        font-size: 50px;
+        font-weight: 600;
+        color: blueviolet;
+        padding: 10px;
+      }
+      button {
+        width: 20%;
+        font-size: 24px;
+        border: 1px solid blueviolet;
+        border-radius: 5px;
+        color: blueviolet;
+        cursor: pointer;
+      }
+      p {
+        font-size: 18px;
+        font-weight: 600;
+        color: blueviolet;
+      }
+      span {
+        font-size: 24px;
+        color: blueviolet;
+      }
+      .c1 {
+        padding-bottom: 24px;
+      }
+      #start {
+        width: 10%;
+        background-color: rgb(10, 208, 10);
+        border: none;
+        outline: none;
+        color: aliceblue;
+        padding: 8px;
+      }
+      #reset {
+        width: 10%;
+        background-color: red;
+        border: none;
+        outline: none;
+        color: aliceblue;
+        padding: 8px;
+      }
+      .ptbkbtn {
+        width: 20%;
+        text-align: center;
+        text-decoration: none;
+        border: 1px solid blueviolet;
+        padding: 10px 20px;
+        font-size: 24px;
+        font-weight: 600;
+        background: linear-gradient(45deg, blueviolet, rgb(0, 0, 0));
+        color: white;
+        border-radius: 5px;
+        margin-top: 100px;
+      }
+      .dv {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <body class="dv">
+      <div id="container">
+        <h1>Pomodoro Timer</h1>
+        <div id="timer">25:00</div>
+        <div id="controls">
+          <p>Session Length</p>
+          <div class="c1">
+            <button id="session-decrease">-</button>
+            <span id="session-length">25</span>
+            <button id="session-increase">+</button>
+          </div>
+          <p>Break Length</p>
+          <div class="c1">
+            <button id="break-decrease">-</button>
+            <span id="break-length">5</span>
+            <button id="break-increase">+</button>
+          </div>
+          <button id="start">Start</button>
+          <button id="reset">Reset</button>
+        </div>
+      </div>
+      <a
+        href="https://www.picktime.com/OnlineBookingPage"
+        class="ptbkbtn"
+        target="_blank"
+        style="float: none"
+        >Book Now</a
+      >
+    </body>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const timerDisplay = document.getElementById("timer");
+        const sessionLengthDisplay = document.getElementById("session-length");
+        const breakLengthDisplay = document.getElementById("break-length");
+        const sessionDecreaseBtn = document.getElementById("session-decrease");
+        const sessionIncreaseBtn = document.getElementById("session-increase");
+        const breakDecreaseBtn = document.getElementById("break-decrease");
+        const breakIncreaseBtn = document.getElementById("break-increase");
+        const startBtn = document.getElementById("start");
+        const resetBtn = document.getElementById("reset");
+
+        let sessionLength = 25;
+        let breakLength = 5;
+        let timer;
+        let timeLeft;
+        let isSession = true; // flag to track if it's session time
+
+        sessionDecreaseBtn.addEventListener("click", () => {
+          if (sessionLength > 1) {
+            sessionLength--;
+            sessionLengthDisplay.textContent = sessionLength;
+          }
+        });
+
+        sessionIncreaseBtn.addEventListener("click", () => {
+          sessionLength++;
+          sessionLengthDisplay.textContent = sessionLength;
+        });
+
+        breakDecreaseBtn.addEventListener("click", () => {
+          if (breakLength > 1) {
+            breakLength--;
+            breakLengthDisplay.textContent = breakLength;
+          }
+        });
+
+        breakIncreaseBtn.addEventListener("click", () => {
+          breakLength++;
+          breakLengthDisplay.textContent = breakLength;
+        });
+
+        startBtn.addEventListener("click", () => {
+          startTimer();
+        });
+
+        resetBtn.addEventListener("click", () => {
+          clearInterval(timer);
+          sessionLength = 25;
+          breakLength = 5;
+          sessionLengthDisplay.textContent = sessionLength;
+          breakLengthDisplay.textContent = breakLength;
+          timerDisplay.textContent = "25:00";
+        });
+
+        function startTimer() {
+          let totalTime = isSession ? sessionLength * 60 : breakLength * 60;
+          let startTime = Date.now();
+          timer = setInterval(() => {
+            let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            timeLeft = totalTime - elapsedTime;
+
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes
+              .toString()
+              .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+            if (timeLeft <= 0) {
+              clearInterval(timer);
+              isSession = !isSession; // switch between session and break
+              startTimer();
+            }
+          }, 1000);
+        }
+      });
+    </script>
+  </body>
+</html>
